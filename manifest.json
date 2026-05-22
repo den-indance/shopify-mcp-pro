@@ -18,6 +18,7 @@
     "url": "https://github.com/den-indance/shopify-mcp-pro"
   },
   "license": "MIT",
+  "icon": "icon.png",
   "keywords": [
     "mcp",
     "shopify",
