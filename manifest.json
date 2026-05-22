@@ -2,7 +2,7 @@
   "manifest_version": "0.3",
   "name": "shopify-mcp-pro",
   "display_name": "Shopify MCP Pro",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "Shopify MCP with real analytics (ShopifyQL), auto-refresh auth, and Shopify API 2026-04.",
   "long_description": "Production-grade Shopify MCP server. Fixes the analytics gap in stock implementations by exposing ShopifyQL for real sales / customer / inventory queries, auto-refreshes OAuth tokens, and targets the current Shopify API 2026-04.\n\nWhat you get via the agent:\n• Real analytics via ShopifyQL — sales by product / variant / collection, customer cohorts, inventory turn, marketing ROI — answered as data, not screenshots.\n• Auto-refresh auth — long-running agent sessions don't break on token expiry.\n• Shopify Admin API 2026-04 — products, variants, orders, customers, draft orders, fulfillments, refunds, discounts, metafields, metaobjects, redirects, gift cards, webhooks, all read+write.\n• Reporting endpoints — sales, traffic, conversion, marketing, financial summary, abandoned checkouts.\n\nOpen-source fork of the original shopify-mcp with all the breakages from 2026 API versions patched. See the README for the full tool list and credential setup.",
   "author": {

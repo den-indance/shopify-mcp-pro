@@ -6,36 +6,41 @@ import { z } from 'zod';
 import dotenv from 'dotenv';
 import { ShopifyClient } from './shopify-client.js';
 import express from 'express';
-// Load environment variables only if not already set
+// Load .env if any required var is missing (no-op if already injected)
 if (!process.env.SHOPIFY_STORE_DOMAIN || !process.env.SHOPIFY_CLIENT_ID || !process.env.SHOPIFY_CLIENT_SECRET) {
     dotenv.config();
 }
-// Validate environment variables
+// Lazy validation: registries / catalog scanners (Smithery, mcp.so, Claude
+// Desktop probes) run the server WITHOUT credentials to introspect tools/list.
+// We must NOT process.exit() in that case — the MCP stdio handshake has to
+// complete so tools/list returns the static tool catalog. Credential
+// validation runs at the FIRST real tool invocation via the Proxy below.
 const requiredEnvVars = ['SHOPIFY_STORE_DOMAIN', 'SHOPIFY_CLIENT_ID', 'SHOPIFY_CLIENT_SECRET'];
-for (const envVar of requiredEnvVars) {
-    if (!process.env[envVar]) {
-        process.stderr.write(`Error: ${envVar} is required\n\n`);
-        process.stderr.write(`Please set the following environment variables:\n`);
-        process.stderr.write(`  SHOPIFY_STORE_DOMAIN - Your Shopify store domain (e.g., my-store.myshopify.com)\n`);
-        process.stderr.write(`  SHOPIFY_CLIENT_ID - Client ID from Shopify Dev Dashboard\n`);
-        process.stderr.write(`  SHOPIFY_CLIENT_SECRET - Client Secret from Shopify Dev Dashboard\n\n`);
-        process.stderr.write(`You can set them in your MCP settings or create a .env file\n`);
-        process.exit(1);
-    }
+const missingEnvVars = requiredEnvVars.filter((v) => !process.env[v]);
+if (missingEnvVars.length) {
+    process.stderr.write(`[shopify-mcp] warning: missing env (${missingEnvVars.join(', ')}). Starting in catalog-only mode; tool calls will fail until set.\n`);
 }
-// Basic validation
 const domain = process.env.SHOPIFY_STORE_DOMAIN;
-if (!domain.includes('.myshopify.com') && !domain.includes('.')) {
-    process.stderr.write(`Error: Invalid store domain format. Expected format: store-name.myshopify.com\n`);
-    process.exit(1);
+if (domain && !domain.includes('.myshopify.com') && !domain.includes('.')) {
+    process.stderr.write(`[shopify-mcp] warning: SHOPIFY_STORE_DOMAIN format suspicious (expected store-name.myshopify.com): ${domain}\n`);
 }
-// Initialize Shopify client
-const shopifyClient = new ShopifyClient({
-    storeDomain: process.env.SHOPIFY_STORE_DOMAIN,
-    clientId: process.env.SHOPIFY_CLIENT_ID,
-    clientSecret: process.env.SHOPIFY_CLIENT_SECRET,
-    apiVersion: process.env.SHOPIFY_API_VERSION,
-});
+// Initialize Shopify client lazily — real client if all creds present, else
+// a Proxy that throws a clear error on any method call. Tool registrations
+// stay intact; tools/list works; only actual tool execution fails.
+const shopifyClient = missingEnvVars.length === 0
+    ? new ShopifyClient({
+        storeDomain: process.env.SHOPIFY_STORE_DOMAIN,
+        clientId: process.env.SHOPIFY_CLIENT_ID,
+        clientSecret: process.env.SHOPIFY_CLIENT_SECRET,
+        apiVersion: process.env.SHOPIFY_API_VERSION,
+    })
+    : new Proxy({}, {
+        get() {
+            return () => {
+                throw new Error(`shopify-mcp: missing required env vars (${missingEnvVars.join(', ')}). Set them in your MCP client config or .env file before calling any tool.`);
+            };
+        },
+    });
 // Create MCP server (moved to bottom)
 // Register all tools
 function registerTools(server) {

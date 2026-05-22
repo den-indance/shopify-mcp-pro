@@ -6,12 +6,12 @@
     "url": "https://github.com/den-indance/shopify-mcp-pro",
     "source": "github"
   },
-  "version": "2.0.4",
+  "version": "2.0.5",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "@den.dance/shopify-mcp-pro",
-      "version": "2.0.4",
+      "version": "2.0.5",
       "transport": {
         "type": "stdio"
       },
