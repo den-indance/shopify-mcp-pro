@@ -1,0 +1,84 @@
+{
+  "manifest_version": "0.3",
+  "name": "shopify-mcp-pro",
+  "display_name": "Shopify MCP Pro",
+  "version": "2.0.4",
+  "description": "Shopify MCP with real analytics (ShopifyQL), auto-refresh auth, and Shopify API 2026-04.",
+  "long_description": "Production-grade Shopify MCP server. Fixes the analytics gap in stock implementations by exposing ShopifyQL for real sales / customer / inventory queries, auto-refreshes OAuth tokens, and targets the current Shopify API 2026-04.\n\nWhat you get via the agent:\n• Real analytics via ShopifyQL — sales by product / variant / collection, customer cohorts, inventory turn, marketing ROI — answered as data, not screenshots.\n• Auto-refresh auth — long-running agent sessions don't break on token expiry.\n• Shopify Admin API 2026-04 — products, variants, orders, customers, draft orders, fulfillments, refunds, discounts, metafields, metaobjects, redirects, gift cards, webhooks, all read+write.\n• Reporting endpoints — sales, traffic, conversion, marketing, financial summary, abandoned checkouts.\n\nOpen-source fork of the original shopify-mcp with all the breakages from 2026 API versions patched. See the README for the full tool list and credential setup.",
+  "author": {
+    "name": "Denys Malieiev",
+    "email": "denismaleev95@gmail.com",
+    "url": "https://den.dance/"
+  },
+  "homepage": "https://den.dance/",
+  "documentation": "https://github.com/den-indance/shopify-mcp-pro#readme",
+  "support": "https://github.com/den-indance/shopify-mcp-pro/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/den-indance/shopify-mcp-pro"
+  },
+  "license": "MIT",
+  "keywords": [
+    "mcp",
+    "shopify",
+    "api",
+    "claude",
+    "ai",
+    "llm",
+    "model-context-protocol",
+    "shopify-admin",
+    "shopifyql"
+  ],
+  "server": {
+    "type": "node",
+    "entry_point": "build/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/build/index.js"],
+      "env": {
+        "SHOPIFY_STORE_DOMAIN": "${user_config.shopify_store_domain}",
+        "SHOPIFY_CLIENT_ID": "${user_config.shopify_client_id}",
+        "SHOPIFY_CLIENT_SECRET": "${user_config.shopify_client_secret}",
+        "SHOPIFY_API_VERSION": "${user_config.shopify_api_version}"
+      }
+    }
+  },
+  "user_config": {
+    "shopify_store_domain": {
+      "type": "string",
+      "title": "Shopify Store Domain",
+      "description": "Your Shopify store domain, e.g. my-store.myshopify.com",
+      "required": true,
+      "sensitive": false
+    },
+    "shopify_client_id": {
+      "type": "string",
+      "title": "Shopify Client ID",
+      "description": "Client ID from Shopify Dev Dashboard → your custom app.",
+      "required": true,
+      "sensitive": false
+    },
+    "shopify_client_secret": {
+      "type": "string",
+      "title": "Shopify Client Secret",
+      "description": "Client Secret from Shopify Dev Dashboard → your custom app.",
+      "required": true,
+      "sensitive": true
+    },
+    "shopify_api_version": {
+      "type": "string",
+      "title": "Shopify API Version",
+      "description": "Optional override (defaults to 2026-04).",
+      "default": "2026-04",
+      "required": false,
+      "sensitive": false
+    }
+  },
+  "compatibility": {
+    "claude_desktop": ">=0.10.0",
+    "platforms": ["darwin", "linux", "win32"],
+    "runtimes": {
+      "node": ">=18.0.0"
+    }
+  }
+}

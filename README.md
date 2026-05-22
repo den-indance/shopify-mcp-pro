@@ -1,6 +1,7 @@
 # Shopify MCP Pro
 
 [![npm](https://img.shields.io/npm/v/@den.dance/shopify-mcp-pro)](https://www.npmjs.com/package/@den.dance/shopify-mcp-pro)
+[![smithery badge](https://smithery.ai/badge/den-indance/shopify-mcp-pro)](https://smithery.ai/servers/den-indance/shopify-mcp-pro)
 
 The working Shopify MCP server. Connect Claude to your Shopify store — products, orders, customers, inventory, analytics and more.
 
